@@ -1,0 +1,61 @@
+# Jenkins Configuration as Code. ${...} values are read from files in
+# /run/secrets (mounted read-only from /srv/jenkins/secrets), never from env,
+# so pipeline steps cannot print them.
+jenkins:
+  systemMessage: "Enterprise RAG Search: CI/CD of the RAG research prototype"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: admin
+          name: Admin
+          password: ${jenkins_admin_password}
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      # Jenkins listens on 127.0.0.1 only and is reached through an SSH tunnel.
+      allowAnonymousRead: true
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: PUSH_IMAGE
+            value: "false"
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - string:
+              scope: GLOBAL
+              id: llm-api-key
+              description: LLM API key passed to the deployed service
+              secret: ${llm_api_key}
+
+unclassified:
+  location:
+    url: http://localhost:8090/
+
+jobs:
+  - script: |
+      pipelineJob('enterprise-rag') {
+        description('RAG system for intelligent enterprise search: test, build, deploy. Source: https://github.com/mkbdlnv/enterprise-rag')
+        properties {
+          pipelineTriggers {
+            triggers {
+              pollSCM { scmpoll_spec('H/2 * * * *') }
+            }
+          }
+        }
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url('https://github.com/mkbdlnv/enterprise-rag.git') }
+                branch('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+            lightweight(true)
+          }
+        }
+      }

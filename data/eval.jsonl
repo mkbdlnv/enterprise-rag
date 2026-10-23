@@ -1,0 +1,30 @@
+{"question": "How many vacation days do I get per year?", "doc_id": "hr-leave-policy"}
+{"question": "Can I carry over unused vacation days to next year?", "doc_id": "hr-leave-policy"}
+{"question": "Do I need a medical certificate when I am sick?", "doc_id": "hr-leave-policy"}
+{"question": "How many days per week can I work from home?", "doc_id": "hr-remote-work"}
+{"question": "Is there an internet allowance for home office?", "doc_id": "hr-remote-work"}
+{"question": "Can I work from abroad?", "doc_id": "hr-remote-work"}
+{"question": "How do I get VPN access?", "doc_id": "it-vpn-access"}
+{"question": "VPN says gateway not responding", "doc_id": "it-vpn-access"}
+{"question": "I lost my phone with the authenticator app", "doc_id": "it-vpn-access"}
+{"question": "How long must my password be?", "doc_id": "it-password-policy"}
+{"question": "My account is locked after failed login attempts", "doc_id": "it-password-policy"}
+{"question": "Where should I store team credentials?", "doc_id": "it-password-policy"}
+{"question": "How do I order a new monitor?", "doc_id": "it-hardware-request"}
+{"question": "When will my laptop be replaced?", "doc_id": "it-hardware-request"}
+{"question": "What is the per diem for international trips?", "doc_id": "finance-travel-expenses"}
+{"question": "What is the deadline for submitting travel receipts?", "doc_id": "finance-travel-expenses"}
+{"question": "Is alcohol reimbursed on business trips?", "doc_id": "finance-travel-expenses"}
+{"question": "How many quotes are needed for a purchase above 5000 USD?", "doc_id": "finance-procurement"}
+{"question": "How do I register a new supplier?", "doc_id": "finance-procurement"}
+{"question": "I clicked a phishing link, what should I do?", "doc_id": "security-incident-response"}
+{"question": "Who do I report a security incident to?", "doc_id": "security-incident-response"}
+{"question": "Can I paste customer data into a public chatbot?", "doc_id": "security-data-classification"}
+{"question": "What are the data classification levels?", "doc_id": "security-data-classification"}
+{"question": "Who is my onboarding buddy?", "doc_id": "hr-onboarding"}
+{"question": "How long is the probation period?", "doc_id": "hr-onboarding"}
+{"question": "How many approvals does a pull request need?", "doc_id": "eng-release-process"}
+{"question": "When are production deployments allowed?", "doc_id": "eng-release-process"}
+{"question": "How do I book a meeting room?", "doc_id": "general-office"}
+{"question": "What happens if I lose my badge?", "doc_id": "general-office"}
+{"question": "Are electric car chargers free?", "doc_id": "general-office"}

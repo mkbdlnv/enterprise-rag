@@ -1,0 +1,40 @@
+[project]
+name = "ragsearch"
+version = "0.1.0"
+description = "Retrieval-Augmented Generation system for intelligent enterprise search"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Medet Kabdulinov" }]
+dependencies = ["fastapi>=0.115", "uvicorn>=0.34"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov>=6", "httpx>=0.28", "ruff>=0.8"]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ragsearch = ["index.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["ragsearch"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ragsearch", "conftest"]

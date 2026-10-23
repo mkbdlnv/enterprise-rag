@@ -1,0 +1,48 @@
+# Optional: the same image on Kubernetes (Minikube / k3s).
+#   minikube image load enterprise-rag:latest
+#   kubectl create secret generic rag-llm --from-literal=LLM_API_KEY=...   (optional)
+#   kubectl apply -f k8s/deployment.yaml
+#   kubectl port-forward svc/enterprise-rag 8000:80
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enterprise-rag
+  labels: { app: enterprise-rag }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: enterprise-rag }
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: { maxUnavailable: 0, maxSurge: 1 }
+  template:
+    metadata:
+      labels: { app: enterprise-rag }
+    spec:
+      containers:
+        - name: api
+          image: enterprise-rag:latest
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 8000 }]
+          envFrom:
+            - secretRef: { name: rag-llm, optional: true }
+          resources:
+            requests: { cpu: 100m, memory: 96Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            initialDelaySeconds: 10
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: enterprise-rag
+spec:
+  selector: { app: enterprise-rag }
+  ports:
+    - port: 80
+      targetPort: 8000

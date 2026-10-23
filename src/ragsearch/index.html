@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enterprise RAG Search</title>
+<style>
+  :root { --bg:#0b0d12; --panel:#141821; --text:#e7e9ee; --muted:#8e97a8; --accent:#5fe3d0; --line:#232836; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 48px 16px; }
+  h1 { font-weight: 300; font-size: 2.2rem; margin: 0 0 4px; }
+  p.lead { color: var(--muted); margin: 0 0 32px; }
+  form { display:flex; gap:8px; flex-wrap:wrap; }
+  input, select, button { font:inherit; color:var(--text); background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+  input { flex: 1 1 320px; }
+  button { border-color: var(--accent); cursor:pointer; }
+  button:disabled { opacity:.5; cursor:wait; }
+  .answer { margin-top:32px; padding:20px; background:var(--panel); border:1px solid var(--line); border-radius:14px; white-space:pre-wrap; }
+  .meta { color:var(--muted); font-size:.85rem; margin-top:8px; }
+  .src { margin-top:16px; padding:14px 16px; border-left:2px solid var(--accent); background:var(--panel); border-radius:0 10px 10px 0; }
+  .src b { font-weight:500; }
+  .src small { color:var(--muted); }
+  .examples button { background:none; border:none; color:var(--accent); padding:4px 0; margin-right:16px; text-align:left; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Enterprise RAG Search</h1>
+  <p class="lead">Ask a question about company policies. The answer is generated only from retrieved documents and cites them.</p>
+  <form id="f">
+    <input id="q" placeholder="How many vacation days do I get?" autocomplete="off" required minlength="3">
+    <select id="dep"><option value="">All departments</option></select>
+    <button id="go">Ask</button>
+  </form>
+  <div class="examples" id="ex"></div>
+  <div id="out"></div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+["How do I get VPN access?", "What is the deadline for submitting travel receipts?", "I clicked a phishing link, what should I do?"]
+  .forEach(t => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t;
+    b.onclick = () => { $('q').value = t; ask(); }; $('ex').appendChild(b); });
+fetch('api/documents').then(r => r.json()).then(docs => {
+  [...new Set(docs.map(d => d.department))].sort().forEach(d => {
+    const o = document.createElement('option'); o.value = o.textContent = d; $('dep').appendChild(o); });
+});
+async function ask() {
+  $('go').disabled = true; $('out').innerHTML = '<p class="meta">Searching…</p>';
+  try {
+    const r = await fetch('api/ask', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ question: $('q').value, department: $('dep').value || null }) });
+    const a = await r.json();
+    if (!r.ok) throw new Error(JSON.stringify(a.detail));
+    $('out').innerHTML = `<div class="answer">${esc(a.answer)}<div class="meta">${a.mode} · ${a.latency_ms} ms</div></div>` +
+      a.sources.map(s => `<div class="src"><b>[${s.n}] ${esc(s.title)}</b> — ${esc(s.section)} <small>${esc(s.department)} · BM25 ${s.score}</small><br><small>${esc(s.text.slice(0, 260))}…</small></div>`).join('');
+  } catch (e) { $('out').innerHTML = `<p class="meta">Error: ${esc(String(e.message))}</p>`; }
+  $('go').disabled = false;
+}
+$('f').onsubmit = e => { e.preventDefault(); ask(); };
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+.venv/
+.idea/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+reports/
+*.env
+!app.env.example
