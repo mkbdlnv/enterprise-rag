@@ -59,6 +59,9 @@ async function ask() {
   $('go').disabled = false;
 }
 $('f').onsubmit = e => { e.preventDefault(); ask(); };
+// /?q=... opens with that question answered: answers can be shared as links.
+const initial = new URLSearchParams(location.search).get('q');
+if (initial) { $('q').value = initial; ask(); }
 </script>
 </body>
 </html>
