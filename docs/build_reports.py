@@ -1,4 +1,4 @@
-"""Builds the assignment reports: Markdown -> DOCX (pandoc) -> required formatting.
+"""Builds the assignment report: Markdown -> DOCX (pandoc) -> required formatting.
 
     python docs/build_reports.py      # needs pandoc and python-docx
 
@@ -79,7 +79,7 @@ def format_docx(path: Path):
     in_refs = False
     for p in doc.paragraphs:
         if p.style.name.startswith("Heading"):
-            in_refs = p.text.strip() == "References"
+            in_refs = p.text.strip() in ("References", "Список литературы")
         elif in_refs:
             # The reference list is set single-spaced, as usual for bibliographies.
             p.paragraph_format.line_spacing = 1.0
@@ -109,7 +109,7 @@ def format_docx(path: Path):
 
 
 def main():
-    for name in ("report-theory", "report-practical"):
+    for name in ("report",):
         out = DOCS / f"{name}.docx"
         subprocess.run(
             ["pandoc", f"{name}.md", "-o", out.name, "--resource-path", "."],
