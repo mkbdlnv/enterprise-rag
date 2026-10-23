@@ -12,6 +12,9 @@ image=$1
 port=$2
 name=${NAME:-rag}
 
+# "none" is the placeholder credential of a Jenkins without a key: answer extractively.
+if [ "${LLM_API_KEY:-}" = none ]; then unset LLM_API_KEY; fi
+
 prev=$(docker inspect -f '{{.Config.Image}}' "$name" 2>/dev/null || true)
 
 run() {
